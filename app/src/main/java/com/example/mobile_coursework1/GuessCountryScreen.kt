@@ -1,7 +1,6 @@
 package com.example.mobile_coursework1
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
@@ -10,11 +9,7 @@ import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,6 +32,11 @@ fun GuessCountry() {
         countryList.add(countryJson)
     }
 
+    var randomCountry by remember { mutableStateOf(getRandomCountry(countryList)) }
+    var selectedCountry by remember { mutableStateOf<CountryJson?>(null) }
+    var showResult by remember { mutableStateOf(false) }
+    var correctCountryName by remember { mutableStateOf("") }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +49,12 @@ fun GuessCountry() {
                 .shadow(elevation = 8.dp, shape = RectangleShape)
                 .padding(50.dp)
         ) {
-            GenerateRandomFlag(countryList)
+            val image = painterResource(id = getResourceId(randomCountry.letterCode.lowercase()))
+            Image(
+                painter = image,
+                contentDescription = "Flag Icon",
+                modifier = Modifier.size(200.dp) // Adjust size as needed
+            )
         }
 
         Column(
@@ -57,21 +62,59 @@ fun GuessCountry() {
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
         ) {
-            DropDownMenu(countryList)
-            // Added space between flag box and button
-            Spacer(modifier = Modifier.height(370.dp))
+            ExposedDropdownMenu(countryList, selectedCountry) { country ->
+                selectedCountry = country
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (showResult) {
+                val isCorrect = selectedCountry?.countryName == randomCountry.countryName
+                val textColor = if (isCorrect) Color.Green else Color.Red
+                val resultText = if (isCorrect) "CORRECT!" else "WRONG!"
+                val correctCountryText = if (!isCorrect) "Correct country: $correctCountryName" else ""
+                Text(
+                    text = resultText,
+                    color = textColor,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+                if (!isCorrect) {
+                    Text(
+                        text = correctCountryText,
+                        color = Color.Blue,
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             Button(
-                onClick = { /* Handle button click */ },
+                onClick = {
+                    if (showResult) {
+                        randomCountry = getRandomCountry(countryList)
+                        selectedCountry = null
+                        showResult = false
+                        correctCountryName = ""
+                    } else {
+                        showResult = true
+                        if (selectedCountry?.countryName != randomCountry.countryName) {
+                            correctCountryName = randomCountry.countryName
+                        }
+                    }
+                },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
-
             ) {
-                Text(text = "Submit")
+                Text(text = if (showResult) "Next" else "Submit")
             }
         }
     }
-
 }
+
+private fun getRandomCountry(countryList: List<CountryJson>): CountryJson {
+    return countryList.random()
+}
+
 
 @Composable
 private fun GenerateRandomFlag(countryList: MutableList<CountryJson>) {
@@ -102,7 +145,7 @@ private fun readJsonFile(): String {
 }
 
 private fun getResourceId(countryCode: String): Int {
-    // Assuming your drawable resources are named using the country codes
+ 
     return try {
         R.drawable::class.java.getField(countryCode).getInt(null)
     } catch (e: Exception) {
@@ -111,48 +154,46 @@ private fun getResourceId(countryCode: String): Int {
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DropDownMenu(countryList: List<CountryJson>) {
 
-        var isExpanded by remember { mutableStateOf(false) }
-        var selectedCountry by remember { mutableStateOf<CountryJson?>(null) }
+private fun ExposedDropdownMenu(
+    countryList: List<CountryJson>,
+    selectedCountry: CountryJson?,
+    onCountrySelected: (CountryJson) -> Unit
+) {
+    var isExpanded by remember { mutableStateOf(false) }
 
-        ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = { isExpanded = it }) {
-            TextField(
-                value = selectedCountry?.countryName ?: "Guess The Country In The Flag",
-                onValueChange = { },
-                readOnly = true,
-                trailingIcon = {
-                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
-                },
-                colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor()
-            )
-            ExposedDropdownMenu(
-                expanded = isExpanded,
-                onDismissRequest = { isExpanded = false }
-            ) {
-                countryList.forEach { country ->
-                    DropdownMenuItem(
-                        text = { Text(text = country.countryName) },
-                        onClick = {
-                            selectedCountry = country
-                            isExpanded = false
-                        }
-                    )
-                }
+    ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = { isExpanded = it }) {
+        TextField(
+            value = selectedCountry?.countryName ?: "Guess The Country In The Flag",
+            onValueChange = { },
+            readOnly = true,
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded)
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors(),
+            modifier = Modifier.menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }
+        ) {
+            countryList.forEach { country ->
+                DropdownMenuItem(
+                    text = { Text(text = country.countryName) },
+                    onClick = {
+                        onCountrySelected(country)
+                        isExpanded = false
+                    }
+                )
             }
         }
     }
-
-
+}
 
 //data class
 data class CountryJson(
     val letterCode: String,
     val countryName: String
 )
-
-
