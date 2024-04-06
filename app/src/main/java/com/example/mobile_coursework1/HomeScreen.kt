@@ -1,5 +1,7 @@
 package com.example.mobile_coursework1
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,11 +17,10 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun HomeScreen(navigateToGuessTheCountry: () -> Unit) {
-    //Components of Home screen founded below
-
+fun HomeScreen(context: Context, navigateToGuessTheCountry: () -> Unit) {
+    //Components of Home screen found below
     TitleSection()
-    ButtonSection(navigateToGuessTheCountry)
+    ButtonSection(context = context, navigateToGuessTheCountry = navigateToGuessTheCountry)
 }
 
 @Composable
@@ -53,7 +54,7 @@ fun TitleSection() {
     }
 }
 @Composable
-fun ButtonSection(navigateToGuessTheCountry: () -> Unit) {
+fun ButtonSection(context: Context, navigateToGuessTheCountry: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -62,7 +63,10 @@ fun ButtonSection(navigateToGuessTheCountry: () -> Unit) {
             .padding(18.dp)
     ) {
         // Change the text for each button
-        ButtonItem(text = "Guess the Country",onClick= navigateToGuessTheCountry)
+        ButtonItem(text = "Guess the Country", onClick= {
+            val intent = Intent(context, GuessCountryActivity::class.java)
+            context.startActivity(intent)
+        })
         ButtonItem(text = "Guess-Hints", onClick =navigateToGuessTheCountry)
         ButtonItem(text = "Guess the Flag",onClick =navigateToGuessTheCountry)
         ButtonItem(text = "Advanced Level",onClick =navigateToGuessTheCountry)
