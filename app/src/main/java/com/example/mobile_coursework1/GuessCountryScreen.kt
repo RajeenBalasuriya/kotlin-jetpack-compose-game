@@ -22,7 +22,7 @@ import org.json.JSONObject
 
 @Composable
 fun GuessCountry() {
-    val jsonString = readJsonFile()
+    val jsonString = readJsonFile();
     val countryList = mutableListOf<CountryJson>()
 
     val jsonObject = JSONObject(jsonString)
@@ -32,7 +32,7 @@ fun GuessCountry() {
         countryList.add(countryJson)
     }
 
-    var randomCountry by remember { mutableStateOf(getRandomCountry(countryList)) }
+    var randomCountry by remember { mutableStateOf(FlagUtils.getRandomCountry(countryList)) }
     var selectedCountry by remember { mutableStateOf<CountryJson?>(null) }
     var showResult by remember { mutableStateOf(false) }
     var correctCountryName by remember { mutableStateOf("") }
@@ -45,15 +45,15 @@ fun GuessCountry() {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 200.dp) // Adjusted padding for space between flag and button
+                .padding(bottom = 200.dp)
                 .shadow(elevation = 8.dp, shape = RectangleShape)
                 .padding(50.dp)
         ) {
-            val image = painterResource(id = getResourceId(randomCountry.letterCode.lowercase()))
+            val image = painterResource(id = FlagUtils.getResourceId(randomCountry.letterCode.lowercase()))
             Image(
                 painter = image,
                 contentDescription = "Flag Icon",
-                modifier = Modifier.size(200.dp) // Adjust size as needed
+                modifier = Modifier.size(200.dp)
             )
         }
 
@@ -92,7 +92,7 @@ fun GuessCountry() {
             Button(
                 onClick = {
                     if (showResult) {
-                        randomCountry = getRandomCountry(countryList)
+                        randomCountry = FlagUtils.getRandomCountry(countryList)
                         selectedCountry = null
                         showResult = false
                         correctCountryName = ""
@@ -110,50 +110,6 @@ fun GuessCountry() {
         }
     }
 }
-
-private fun getRandomCountry(countryList: List<CountryJson>): CountryJson {
-    return countryList.random()
-}
-
-
-@Composable
-private fun GenerateRandomFlag(countryList: MutableList<CountryJson>) {
-    //getting a random country from the list
-    val randomCountry = countryList.random()
-    //get the name and the country code
-    val randomCountryName = randomCountry.countryName
-    val randomCountryLetterCode = randomCountry.letterCode.lowercase()
-
-    val image = painterResource(id = getResourceId(randomCountryLetterCode))
-
-    Image(
-        painter = image,
-        contentDescription = "Flag Icon",
-        modifier = Modifier.size(200.dp) // Adjust size as needed
-    )
-}
-
-@Composable
-private fun readJsonFile(): String {
-    val context = LocalContext.current
-
-    //return jsonString
-    return context.assets
-        .open("countries.json")
-        .bufferedReader()
-        .use { it.readText() }
-}
-
-private fun getResourceId(countryCode: String): Int {
- 
-    return try {
-        R.drawable::class.java.getField(countryCode).getInt(null)
-    } catch (e: Exception) {
-        // If resource not found, return a default drawable resource
-        0
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 
@@ -191,9 +147,3 @@ private fun ExposedDropdownMenu(
         }
     }
 }
-
-//data class
-data class CountryJson(
-    val letterCode: String,
-    val countryName: String
-)
