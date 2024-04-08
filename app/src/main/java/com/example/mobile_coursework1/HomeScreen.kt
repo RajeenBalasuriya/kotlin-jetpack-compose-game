@@ -67,7 +67,10 @@ fun ButtonSection(context: Context, navigateToGuessTheCountry: () -> Unit) {
             val intent = Intent(context, GuessCountryActivity::class.java)
             context.startActivity(intent)
         })
-        ButtonItem(text = "Guess-Hints", onClick =navigateToGuessTheCountry)
+        ButtonItem(text = "Guess-Hints", onClick ={
+            val intent = Intent(context, HintCountryActivity::class.java)
+            context.startActivity(intent)
+        })
         ButtonItem(text = "Guess the Flag",onClick ={
             val intent = Intent(context, GuessFlagActivity::class.java)
             context.startActivity(intent)
