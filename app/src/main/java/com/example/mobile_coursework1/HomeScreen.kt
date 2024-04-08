@@ -1,9 +1,9 @@
 package com.example.mobile_coursework1
 
+
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -68,7 +68,10 @@ fun ButtonSection(context: Context, navigateToGuessTheCountry: () -> Unit) {
             context.startActivity(intent)
         })
         ButtonItem(text = "Guess-Hints", onClick =navigateToGuessTheCountry)
-        ButtonItem(text = "Guess the Flag",onClick =navigateToGuessTheCountry)
+        ButtonItem(text = "Guess the Flag",onClick ={
+            val intent = Intent(context, GuessFlagActivity::class.java)
+            context.startActivity(intent)
+        })
         ButtonItem(text = "Advanced Level",onClick =navigateToGuessTheCountry)
     }
 }
