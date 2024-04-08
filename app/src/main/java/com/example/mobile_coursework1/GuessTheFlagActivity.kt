@@ -3,7 +3,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,7 +55,7 @@ fun FlagSection() {
         countryList.add(countryJson)
     }
 
-    var displayedCountries by remember { mutableStateOf(mutableListOf<CountryJson>()) }
+    val displayedCountries by remember { mutableStateOf(mutableListOf<CountryJson>()) }
 
     // Function to get three new random countries
     fun getNewRandomCountries(): List<CountryJson> {
@@ -92,7 +90,7 @@ fun FlagSection() {
             horizontalAlignment = Alignment.Start
         ) {
             Text(
-                text = "Guess flag of the country :  ${countryToGuess}",
+                text = "Guess flag of the country :  $countryToGuess",
                 style = androidx.compose.ui.text.TextStyle(fontSize = 15.sp)
             )
             Spacer(modifier = Modifier.height(10.dp))
@@ -100,11 +98,7 @@ fun FlagSection() {
                 FlagItem(
                     selectedCountry = country,
                     onItemClick = { clickedCountry ->
-                        if (clickedCountry.countryName == countryToGuess) {
-                            isCorrect = true
-                        } else {
-                            isCorrect = false
-                        }
+                        isCorrect = clickedCountry.countryName == countryToGuess
                         flagClicked = true
                     },
                     countryToGuess = countryToGuess,
@@ -141,7 +135,7 @@ fun FlagSection() {
                         // Reset the flag
                         isCorrect = false
                         flagClicked = false
-                        displayedCountries.clear() 
+                        displayedCountries.clear()
                         randomCountries = getNewRandomCountries() // Get new random countries
                         countryToGuess = randomCountries.random().countryName
                     }
