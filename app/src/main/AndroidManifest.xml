@@ -26,6 +26,7 @@
         <activity android:name=".GuessCountryActivity"/>
         <activity android:name=".GuessFlagActivity"/>
         <activity android:name=".HintCountryActivity"/>
+        <activity android:name=".AdvancedLevelSectionActivity"/>
     </application>
 
 </manifest>

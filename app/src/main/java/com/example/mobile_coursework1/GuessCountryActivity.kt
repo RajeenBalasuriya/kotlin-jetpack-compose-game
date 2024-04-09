@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,7 +55,9 @@ class GuessCountryActivity : ComponentActivity() {
 
 
 @Composable
-fun GuessCountry() {
+fun GuessCountry(
+
+) {
     val jsonString = readJsonFile();
     val countryList = mutableListOf<CountryJson>()
 
@@ -70,30 +77,38 @@ fun GuessCountry() {
         modifier = Modifier
             .fillMaxSize()
             .padding(vertical = 25.dp, horizontal = 60.dp)
+            .verticalScroll(rememberScrollState())
+
     ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 200.dp)
                 .shadow(elevation = 8.dp, shape = RectangleShape)
                 .padding(50.dp)
+                .background(Color.Yellow)
+
         ) {
             val image = painterResource(id = FlagUtils.getResourceId(randomCountry.letterCode.lowercase()))
             Image(
                 painter = image,
                 contentDescription = "Flag Icon",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier
+                    .size(200.dp)
+                    .verticalScroll(rememberScrollState())
             )
+
         }
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 16.dp)
+
+
         ) {
-            ExposedDropdownMenu(countryList, selectedCountry) { country ->
-                selectedCountry = country
-            }
+
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -133,10 +148,26 @@ fun GuessCountry() {
                     }
                 },
                 modifier = Modifier.align(Alignment.CenterHorizontally)
+
             ) {
                 Text(text = if (showResult) "Next" else "Submit")
             }
         }
+    }
+    Box(
+
+
+
+    ){
+        Column(
+            modifier=Modifier.padding(top = 300.dp)
+                .padding(65.dp)
+        ) {
+            ExposedDropdownMenu(countryList, selectedCountry) { country ->
+                selectedCountry = country
+            }
+        }
+
     }
 }
 @OptIn(ExperimentalMaterial3Api::class)

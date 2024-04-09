@@ -52,7 +52,7 @@ class HintCountryActivity : ComponentActivity() {
     }
     @Composable
     fun HintScreen(context: Context) {
-        val jsonString = readJsonFile();
+        val jsonString = readJsonFile()
         val countryList = mutableListOf<CountryJson>()
 
         val jsonObject = JSONObject(jsonString)
@@ -62,7 +62,7 @@ class HintCountryActivity : ComponentActivity() {
             countryList.add(countryJson)
         }
 
-        var randomCountry by remember { mutableStateOf(FlagUtils.getRandomCountry(countryList)) }
+        val randomCountry by remember { mutableStateOf(FlagUtils.getRandomCountry(countryList)) }
         var userInput by remember { mutableStateOf(TextFieldValue()) }
         var displayedText by remember { mutableStateOf(getEmptyDashedString(randomCountry.countryName)) }
         var inCorrectCount by remember { mutableIntStateOf(0) }
@@ -162,7 +162,7 @@ class HintCountryActivity : ComponentActivity() {
                 Button(
                     onClick = {
                         if(showNext){
-                            recreateActivity();
+                            recreateActivity()
                         }
                         if (userInput.text.length > 1) {
                             Toast.makeText(
@@ -170,26 +170,26 @@ class HintCountryActivity : ComponentActivity() {
                             ).show()
                         } else {
 
-                            var userInputUpperCase = userInput.text.uppercase(Locale.ROOT);
-                            var countryNameUpperCase = randomCountry.countryName.uppercase(
+                            val userInputUpperCase = userInput.text.uppercase(Locale.ROOT)
+                            val countryNameUpperCase = randomCountry.countryName.uppercase(
                                 Locale.ROOT
-                            );
+                            )
 
 
-                            var hasMatchingValues =
-                                hasMatchingLetters(userInputUpperCase, countryNameUpperCase);
+                            val hasMatchingValues =
+                                hasMatchingLetters(userInputUpperCase, countryNameUpperCase)
                             if (hasMatchingValues) {
 
                                 displayedText = updateDisplayedText(
                                     displayedText, countryNameUpperCase, userInputUpperCase
-                                );
+                                )
                                 correctAnswer =
-                                    displayedText.uppercase(Locale.ROOT) == countryNameUpperCase;
+                                    displayedText.uppercase(Locale.ROOT) == countryNameUpperCase
                             } else {
                                 Toast.makeText(context, "Wrong input try again", Toast.LENGTH_SHORT)
                                     .show()
-                                inCorrectCount++;
-                                noRemainingAttempts = inCorrectCount > 2;
+                                inCorrectCount++
+                                noRemainingAttempts = inCorrectCount > 2
 
                             }
                         }
@@ -236,7 +236,7 @@ class HintCountryActivity : ComponentActivity() {
         }
         return false}
 
-    fun recreateActivity() {
+    private fun recreateActivity() {
         val intent = Intent(this, HintCountryActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
