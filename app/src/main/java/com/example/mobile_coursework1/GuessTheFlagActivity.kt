@@ -86,29 +86,37 @@ fun FlagSection() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
-            modifier = Modifier.weight(2f),
+            modifier = Modifier
+                .weight(2f)
+                .padding(top = 20.dp),
             horizontalAlignment = Alignment.Start
         ) {
             Text(
                 text = "Guess flag of the country :  $countryToGuess",
-                style = androidx.compose.ui.text.TextStyle(fontSize = 15.sp)
+
+                style = androidx.compose.ui.text.TextStyle(fontSize = 20.sp)
             )
-            Spacer(modifier = Modifier.height(10.dp))
-            randomCountries.forEach { country ->
-                FlagItem(
-                    selectedCountry = country,
-                    onItemClick = { clickedCountry ->
-                        isCorrect = clickedCountry.countryName == countryToGuess
-                        flagClicked = true
-                    },
-                    countryToGuess = countryToGuess,
-                    showCountryToGuess = flagClicked
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+            Column(
+                modifier=Modifier.padding(top = 20.dp),
+                verticalArrangement = Arrangement.Center
+            ) {
+                randomCountries.forEach { country ->
+                    FlagItem(
+                        selectedCountry = country,
+                        onItemClick = { clickedCountry ->
+                            isCorrect = clickedCountry.countryName == countryToGuess
+                            flagClicked = true
+                        },
+                        countryToGuess = countryToGuess,
+                        showCountryToGuess = flagClicked
+                    )
+
+                }
             }
+
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+
 
         if (flagClicked) {
             Column(
@@ -163,13 +171,14 @@ fun FlagItem(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(200.dp)
                     .padding(end = 16.dp)
                     .clip(shape = RoundedCornerShape(8.dp))
                     .shadow(4.dp)
                     .clickable {
                         onItemClick(selectedCountry)
-                    },
+                    }
+                ,
                 contentAlignment = Alignment.Center
             ) {
                 Image(
@@ -177,12 +186,14 @@ fun FlagItem(
                     painter = image,
                     contentDescription = "Flag Icon"
                 )
+
             }
 
             if (showCountryToGuess && selectedCountry.countryName == countryToGuess) {
                 Text(
                     text = countryToGuess,
                     modifier = Modifier.padding(start = 16.dp)
+
                 )
             }
         }
